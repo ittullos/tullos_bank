@@ -9,8 +9,24 @@ class TullosBank < Sinatra::Base
     "Hello World!"
   end
 
-  get '/customers' do
-    Customer.first[:name]
+  get '/login/:id' do
+    Customer[params[:id]].name
+  end
+
+  get '/deposit/:id/:type/:amt' do
+    @customer = Customer[params[:id]]
+    @account = @customer.accounts_dataset.where(type: params[:type]).first
+    @account.add_transaction(amount: params[:amt])
+    "Thank you for your deposit!"
+    "Your new account balance is #{@account.transactions_dataset.sum(:amount)}"
+  end
+
+  get '/withdraw/:id/:type/:amt' do
+    @customer = Customer[params[:id]]
+    @account = @customer.accounts_dataset.where(type: params[:type]).first
+    @account.add_transaction(amount: (params[:amt]).to_i.-@)
+
+
   end
 
 end
