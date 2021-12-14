@@ -17,7 +17,7 @@ class TullosBank < Sinatra::Base
     @customer = Customer[params[:id]]
     @account = @customer.account_of_type(params[:type])
     @account.add_transaction(amount: params[:amt])
-    "Thank you for your deposit! Your new #{@account.type} account balance is #{@account.balance}"
+    "Thank you for your deposit! Your new #{@account.type} account balance is $#{@account.balance_output}"
   end
 
   get '/withdraw/:id/:type/:amt' do
@@ -25,13 +25,13 @@ class TullosBank < Sinatra::Base
     @account = @customer.account_of_type(params[:type])
     @account.add_transaction(amount: (params[:amt]).to_i.-@)
 
-    "Thank you for using Tullos Bank! Your new #{@account.type} account balance is #{@account.balance}"
+    "Thank you for using Tullos Bank! Your new #{@account.type} account balance is $#{@account.balance_output}"
   end
 
   get '/balance/:id/:type' do
     @customer = Customer[params[:id]]
     @account = @customer.account_of_type(params[:type])
-    "Your #{@account.type} account balance is #{@account.balance}"
+    "Your #{@account.type} account balance is $#{@account.balance_output}"
   end
 
   get '/logout' do

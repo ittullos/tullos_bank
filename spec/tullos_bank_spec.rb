@@ -100,7 +100,7 @@ RSpec.describe TullosBank do
     context "for checking balance" do
       it "returns the balance for the given account" do
         get '/balance/1/savings'
-        expect(last_response.body).to include("#{@account.balance}")
+        expect(last_response.body).to include("#{@account.balance_output}")
         expect(last_response.status).to eq(200)
       end
     end
