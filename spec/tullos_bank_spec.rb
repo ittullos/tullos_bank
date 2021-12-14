@@ -16,7 +16,7 @@ RSpec.describe TullosBank do
 
       it "says hello" do
         get '/'
-        expect(last_response.body).to match(/Hello/)
+        expect(last_response.body).to match(/Tullos Bank/)
       end
     end
 
@@ -93,6 +93,21 @@ RSpec.describe TullosBank do
         balance = @account.transactions_dataset.sum(:amount)
         get '/withdraw/1/savings/388'
         expect(@account.transactions_dataset.sum(:amount)).to eq(balance - 388)
+        expect(last_response.status).to eq(200)
+      end
+    end
+
+    context "for checking balance" do
+      it "returns the balance for the given account" do
+        get '/balance/1/savings'
+        expect(last_response.body).to include("#{@account.balance}")
+        expect(last_response.status).to eq(200)
+      end
+    end
+    context "to logout" do
+      it "logs out the customer" do
+        get '/logout'
+        expect(last_response.body).to include("great day")
         expect(last_response.status).to eq(200)
       end
     end

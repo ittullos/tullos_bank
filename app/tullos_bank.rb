@@ -6,27 +6,36 @@ require_relative 'models/account_type'
 class TullosBank < Sinatra::Base
 
   get '/' do
-    "Hello World!"
+    "Welcome to Tullos Bank!"
   end
 
   get '/login/:id' do
-    Customer[params[:id]].name
+    "Hello, #{Customer[params[:id]].name}"
   end
 
   get '/deposit/:id/:type/:amt' do
     @customer = Customer[params[:id]]
-    @account = @customer.accounts_dataset.where(type: params[:type]).first
+    @account = @customer.account_of_type(params[:type])
     @account.add_transaction(amount: params[:amt])
-    "Thank you for your deposit!"
-    "Your new account balance is #{@account.transactions_dataset.sum(:amount)}"
+    "Thank you for your deposit! Your new #{@account.type} account balance is #{@account.balance}"
   end
 
   get '/withdraw/:id/:type/:amt' do
     @customer = Customer[params[:id]]
-    @account = @customer.accounts_dataset.where(type: params[:type]).first
+    @account = @customer.account_of_type(params[:type])
     @account.add_transaction(amount: (params[:amt]).to_i.-@)
 
+    "Thank you for using Tullos Bank! Your new #{@account.type} account balance is #{@account.balance}"
+  end
 
+  get '/balance/:id/:type' do
+    @customer = Customer[params[:id]]
+    @account = @customer.account_of_type(params[:type])
+    "Your #{@account.type} account balance is #{@account.balance}"
+  end
+
+  get '/logout' do
+    "Thank you for using Tullos Bank! Have a great day"
   end
 
 end

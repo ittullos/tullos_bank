@@ -1,7 +1,8 @@
 require 'sequel'
 
-ENV['RACK_ENV'] ||= "dev"
+ENV['RACK_ENV'] ||= "development"
 DB_FILE = "db/tullos_bank_#{ENV['RACK_ENV']}.sqlite3"
+puts "database file name: #{DB_FILE}"
 Sequel::Model.db = Sequel.sqlite DB_FILE
 
 require 'bundler/setup'
