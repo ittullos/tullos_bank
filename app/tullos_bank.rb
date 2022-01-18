@@ -2,15 +2,50 @@ require_relative 'models/customer'
 require_relative 'models/account'
 require_relative 'models/transaction'
 require_relative 'models/account_type'
+require 'sinatra/cookies'
 
+#enable :sessions
+
+#set :session_secret, "My session secret"
+
+#configure(:development) { set :session_secret, "something" }
+
+#set :session_secret, "here be dragons"
+
+# use Rack::Session::Cookie, :key => 'rack.session',
+#                            :path => '/',
+#                            :secret => 'your_secret'
+
+#set :session, :expire_after => 2592000
+
+#Rack::Session::Pool
 class TullosBank < Sinatra::Base
 
+enable :sessions
+set :session_secret, "here be dragons"
+
   get '/' do
-    "Welcome to Tullos Bank!"
+    erb :index
   end
 
-  get '/login/:id' do
-    "Hello, #{Customer[params[:id]].name}"
+  get '/login' do
+    erb :login, { :locals => params }
+  end
+
+  post '/login' do
+    @customer = Customer[params[:id]]
+    session[:customer] = @customer
+    redirect "/account_menu"
+  end
+
+  get '/account_menu' do
+    @customer = session[:customer]
+    erb :account_menu
+  end
+
+  get '/action_menu' do
+    @customer = session[:customer]
+    erb :action_menu
   end
 
   get '/deposit/:id/:type/:amt' do

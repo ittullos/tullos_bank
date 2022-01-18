@@ -72,7 +72,7 @@ RSpec.describe TullosBank do
 
     context "for login" do
       it "returns the first customer's name" do
-        get '/login/1'
+        get '/login'
         expect(last_response.body).to match(/Julie/)
         expect(last_response.status).to eq(200)
       end
