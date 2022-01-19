@@ -6,6 +6,7 @@ gem 'shotgun'
 gem 'sequel'
 gem 'sqlite3'
 gem 'pry-byebug'
+gem 'sinatra-contrib'
 
 group :test do
   gem 'sinatra-sequel'

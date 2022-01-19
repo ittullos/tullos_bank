@@ -16,7 +16,7 @@ RSpec.describe TullosBank do
 
       it "says hello" do
         get '/'
-        expect(last_response.body).to match(/Hello/)
+        expect(last_response.body).to match(/Tullos Bank/)
       end
     end
 
@@ -30,7 +30,6 @@ RSpec.describe TullosBank do
       end
 
       it "gets the name of the first customer" do
-        #get '/customer'
         expect(Customer.first.name).to eq("Julie")
       end
 
@@ -59,6 +58,58 @@ RSpec.describe TullosBank do
         expect(@account.transactions_dataset.sum(:amount)).to eq 22423
       end
     end
+  end
 
+  describe "using routes" do
+
+    before do
+      Customer.insert(name: "Julie")
+      @customer = Customer.last
+      @customer.add_account(type: 'savings')
+      @account = @customer.accounts.first
+      @account.add_transaction(amount: 9611)
+    end
+
+    context "for login" do
+      it "returns the first customer's name" do
+        get '/login'
+        expect(last_response.body).to match(/Julie/)
+        expect(last_response.status).to eq(200)
+      end
+    end
+
+    context "for deposit" do
+      it "returns deposit message" do
+        balance = @account.transactions_dataset.sum(:amount)
+        get '/deposit/1/savings/389'
+        expect(@account.transactions_dataset.sum(:amount)).to eq (balance + 389)
+        expect(last_response.status).to eq(200)
+
+      end
+    end
+
+    context "for withdrawal" do
+      it "returns withdrawal message" do
+        balance = @account.transactions_dataset.sum(:amount)
+        get '/withdraw/1/savings/388'
+        expect(@account.transactions_dataset.sum(:amount)).to eq(balance - 388)
+        expect(last_response.status).to eq(200)
+      end
+    end
+
+    context "for checking balance" do
+      it "returns the balance for the given account" do
+        get '/balance/1/savings'
+        expect(last_response.body).to include("#{@account.balance_output}")
+        expect(last_response.status).to eq(200)
+      end
+    end
+    context "to logout" do
+      it "logs out the customer" do
+        get '/logout'
+        expect(last_response.body).to include("great day")
+        expect(last_response.status).to eq(200)
+      end
+    end
   end
 end
